@@ -19,17 +19,19 @@ mapfile hosts < $HOSTS_LIST
 for ix in ${!hosts[*]}
 do
 	timestamp=$(date +%Y%m%d_%H%M%S.%N)
-	row=`echo ${hosts[$ix]} | sed -e 's/^[[:space:]]*//'`
+	row=`echo ${hosts[$ix]} | sed -e 's/^[[:space:]]*//' | sed -e 's/[[:space:]]*$//'`
 	[[ $row == "" ]] && continue
 	addr=( $(grep -o '^.\+[[:blank:]]' <<<"$row") )
+	[[ $addr =~ ^((25[0-5]|2[0-4][0-9]|1?[0-9][0-9]|[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]|[0-9])$ ]] || continue
 	host=( $(grep -o '[[:blank:]].\+$' <<<"$row") )
+	[[ $host =~ ^[[:alpha:]]([[:alnum:]]|_)+$ ]] || continue
+
 	printf "${timestamp} ${addr} ${host}\n"
 	mkdir -p ${BACKUP_ROOT}/${host} || continue
-
 	mapfile PATHS < $PATHS_LIST
 	for ix in ${!PATHS[*]}
 	do
-		path=`echo ${PATHS[$ix]} | sed -e 's/^[[:space:]]*//'`
+		path=`echo ${PATHS[$ix]} | sed -e 's/^[[:space:]]*//' | sed -e 's/[[:space:]]*$//'`
 		[[ $path == "" ]] && continue
 		printf "rsync -av root@${addr}:${path} ${BACKUP_ROOT}/${host}\n"
 	done
