@@ -26,15 +26,7 @@ do
 	common.validate_hostname ${host} || continue
 	printf "${timestamp} ${addr} ${host}\n"
 	mkdir -p ${BACKUP_ROOT}/${host} || continue
-	mapfile PATHS < $PATHS_LIST
-	for ix in ${!PATHS[*]}
-	do
-		path=`echo ${PATHS[$ix]} | sed -e 's/^[[:space:]]*//' | sed -e 's/[[:space:]]*$//'`
-		[[ $path == "" ]] && continue
-		printf "${addr}:${path} ${BACKUP_ROOT}/${host}\n"
-		rsync -av --info=BACKUP root@${addr}:${path} ${BACKUP_ROOT}/${host}
-		echo
-	done
+	rsync -av -Rr --files-from=paths.list root@${addr}:/ ${BACKUP_ROOT}/${host}
 	echo ${timestamp} > ${BACKUP_ROOT}/${host}/LAST_BACKUP
 	rsync -av ${BACKUP_ROOT}/${host}/LAST_BACKUP root@${addr}:/
 	echo
