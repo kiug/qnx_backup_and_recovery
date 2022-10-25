@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+source common.sh
 
 BACKUP_ROOT=/home/karol/qnx_backup
 PATHS_LIST=paths.list
@@ -22,10 +24,9 @@ do
 	row=`echo ${hosts[$ix]} | sed -e 's/^[[:space:]]*//' | sed -e 's/[[:space:]]*$//'`
 	[[ $row == "" ]] && continue
 	addr=( $(grep -o '^.\+[[:blank:]]' <<<"$row") )
-	[[ $addr =~ ^((25[0-5]|2[0-4][0-9]|1?[0-9][0-9]|[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]|[0-9])$ ]] || continue
+	common.validate_ip_addr ${addr} || continue
 	host=( $(grep -o '[[:blank:]].\+$' <<<"$row") )
-	[[ $host =~ ^[[:alpha:]]([[:alnum:]]|_)+$ ]] || continue
-
+	common.validate_hostname ${host} || continue
 	printf "${timestamp} ${addr} ${host}\n"
 	mkdir -p ${BACKUP_ROOT}/${host} || continue
 	mapfile PATHS < $PATHS_LIST
@@ -33,10 +34,12 @@ do
 	do
 		path=`echo ${PATHS[$ix]} | sed -e 's/^[[:space:]]*//' | sed -e 's/[[:space:]]*$//'`
 		[[ $path == "" ]] && continue
-		printf "rsync -av root@${addr}:${path} ${BACKUP_ROOT}/${host}\n"
+		printf "${addr}:${path} ${BACKUP_ROOT}/${host}\n"
+		rsync -av --info=BACKUP root@${addr}:${path} ${BACKUP_ROOT}/${host}
+		echo
 	done
 	echo ${timestamp} > ${BACKUP_ROOT}/${host}/LAST_BACKUP
-	printf "rsync -av ${BACKUP_ROOT}/${host}/LAST_BACKUP root@${addr}:/\n"
+	rsync -av ${BACKUP_ROOT}/${host}/LAST_BACKUP root@${addr}:/
 	echo
 done
 
