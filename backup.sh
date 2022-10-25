@@ -1,10 +1,7 @@
 #!/bin/bash
 
+source config.sh
 source common.sh
-
-BACKUP_ROOT=/home/karol/qnx_backup
-PATHS_LIST=paths.list
-HOSTS_LIST=hosts.list
 
 [ ! -d $BACKUP_ROOT ] && echo >&2 "Backup directory does not exist: $BACKUP_ROOT" && exit -1
 [ ! -w $BACKUP_ROOT ] && echo >&2 "The backup directory is not writeable: $BACKUP_ROOT" && exit -1

@@ -1,8 +1,7 @@
 #!/bin/bash
 
+source config.sh
 source common.sh
-
-HOSTS_LIST=hosts.list
 
 [ ! -f $HOSTS_LIST ] && echo >&2 "Hosts list file does not exist: $HOSTS_LIST" && exit -1
 [ ! -r $HOSTS_LIST ] && echo >&2 "The hosts list file is not readable: $HOSTS_LIST" && exit -1
