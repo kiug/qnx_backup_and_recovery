@@ -26,9 +26,10 @@ do
 	common.validate_hostname ${host} || continue
 	printf "${timestamp} ${addr} ${host}\n"
 	mkdir -p ${BACKUP_ROOT}/${host} || continue
-	rsync -av -Rr --files-from=paths.list root@${addr}:/ ${BACKUP_ROOT}/${host}
-	echo ${timestamp} > ${BACKUP_ROOT}/${host}/LAST_BACKUP
-	rsync -av ${BACKUP_ROOT}/${host}/LAST_BACKUP root@${addr}:/
+	rsync -av -Rr --files-from=paths.list --log-file=${BACKUP_ROOT}/${host}/BACKUP_LOG root@${addr}:/ ${BACKUP_ROOT}/${host}
+	rsync -av ${BACKUP_ROOT}/${host}/BACKUP_LOG root@${addr}:/
+	echo ${timestamp} > ${BACKUP_ROOT}/${host}/BACKUP_TIMESTAMP
+	rsync -av ${BACKUP_ROOT}/${host}/BACKUP_TIMESTAMP root@${addr}:/
 	echo
 done
 
