@@ -1,0 +1,15 @@
+1. Uruchomić sshd
+2. Utworzyc konto recovery
+3. Zakomentowac w /etc/pam.d/sshd
+...
+# Print the message of the day upon successful login.
+# This includes a dynamically generated part from /run/motd.dynamic
+# and a static (admin-editable) part from /etc/motd.
+session    optional     pam_motd.so  motd=/run/motd.dynamic
+session    optional     pam_motd.so noupdate
+...
+4. Zmienic w /etc/passwd
+...
+recovery:x:0:0::/home/recovery:/home/recovery/recovery.sh
+...
+
