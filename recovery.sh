@@ -1,7 +1,10 @@
 #!/bin/bash
 
-source config.sh
-source common.sh
+[ ! -v QNX_BACKUP_AND_RECOVERY_PATH ] && 
+	echo >&2 "The environment variable QNX_BACKUP_AND_RECOVERY_PATH is not set." && exit -1
+
+source ${QNX_BACKUP_AND_RECOVERY_PATH}/config.sh
+source ${QNX_BACKUP_AND_RECOVERY_PATH}/common.sh
 
 [ ! -d $BACKUP_ROOT ] && echo >&2 "Backup directory does not exist: $BACKUP_ROOT" && exit -1
 [ ! -w $BACKUP_ROOT ] && echo >&2 "The backup directory is not writeable: $BACKUP_ROOT" && exit -1

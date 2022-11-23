@@ -1,6 +1,9 @@
 #!/bin/bash
 
+[ ! -v QNX_BACKUP_AND_RECOVERY_PATH ] && 
+	echo >&2 "The environment variable QNX_BACKUP_AND_RECOVERY_PATH is not set." && exit -1
+
 BACKUP_ROOT=/backups/QNX
-PATHS_LIST=/home/recovery/qnx_backup_and_recovery/paths.list
-HOSTS_LIST=/home/recovery/qnx_backup_and_recovery/hosts.list
+PATHS_LIST=${QNX_BACKUP_AND_RECOVERY_PATH}/paths.list
+HOSTS_LIST=${QNX_BACKUP_AND_RECOVERY_PATH}/hosts.list
 
