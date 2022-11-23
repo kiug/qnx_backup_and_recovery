@@ -1,0 +1,1 @@
+QNX_BACKUP_AND_RECOVERY_PATH=/home/recovery/qnx_backup_and_recovery
