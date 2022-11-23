@@ -1,5 +1,14 @@
-/etc
-/var/spool/cron/crontabs
-/home/pro2000
+/root/.kshrc
+/root/.profile
+/pro/exe_apl
 /pro/exe
+/pro/baza_c
+/pro/baza_opr
+/boot/build
+/etc
+/home/pro2000
+/root/.ph
+/usr/local/bin
+/usr/photon/config
+/var/spool/cron
 
