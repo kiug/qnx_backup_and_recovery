@@ -10,6 +10,14 @@ session    optional     pam_motd.so noupdate
 ...
 4. Zmienic w /etc/passwd
 ...
-recovery:x:0:0::/home/recovery:/home/recovery/recovery.sh
+recovery:x:0:0::/home/recovery:/home/recovery/qnx_backup_and_recovery/recovery.sh
 ...
+5. Dodac zmienna srodowiskowa QNX_BACKUP_AND_RECOVERY_PATH=/home/recovery/qnx_backup_and_recovery (cp .profile ~/).
+6. Ustawic strefe czasowa:
+timedatectl
+timedatectl list-timezones
+timedatectl set-timezone Europe/Warsaw
+7. Wygenerowac klucze SSH (ssh-keygen) i skopiowac klucz publiczny na stacje QNX (ssh_copy_id_to_hosts.sh).
+8. Na komputerach z systemem QNX zainstalować rsync (ssh_copy_rsync.sh).
+9. Skopiowanie qnx_backup_and_recovery.sh do /etc/profile.d
 
