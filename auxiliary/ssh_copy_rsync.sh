@@ -1,10 +1,7 @@
 #!/bin/bash
 
-[ ! -v QNX_BACKUP_AND_RECOVERY_PATH ] && 
-	echo >&2 "The environment variable QNX_BACKUP_AND_RECOVERY_PATH is not set." && exit -1
-
-source ${QNX_BACKUP_AND_RECOVERY_PATH}/config.sh
-source ${QNX_BACKUP_AND_RECOVERY_PATH}/common.sh
+source /opt/qnx_backup_and_recovery/config.sh
+source /opt/qnx_backup_and_recovery/common.sh
 
 [ ! -f $HOSTS_LIST ] && echo >&2 "Hosts list file does not exist: $HOSTS_LIST" && exit -1
 [ ! -r $HOSTS_LIST ] && echo >&2 "The hosts list file is not readable: $HOSTS_LIST" && exit -1
@@ -19,7 +16,7 @@ do
 	common.validate_ip_addr $addr || continue
 	host=( $(grep -o '[[:blank:]].\+$' <<<"$row") )
 	common.validate_hostname $host || continue
-	printf "${timestamp} ${host} ssh-copy-id ${addr}\n"
-	ssh-copy-id root@${addr}
+	printf "${timestamp} ${host} ${addr} copy rsync\n"
+	scp -p auxiliary/rsync.qnx6 root@${addr}:/usr/bin/rsync
 done
 

@@ -1,3 +1,17 @@
+Zawartosc katalogu kopiujemy do /opt/qnx_backup_and_recovery
+
+Opis zawartosci katalogu:
+
+auxiliary    - katalog zawierajacy skrypty pomocnicze, nalezy uruchamiac z poziomu katalogu glownego
+backup.sh    - skrypt tworzacy kopie zapasowa stacji
+common.sh    - elementy wspolne skryptow
+config.sh    - parametryzacja skryptow
+hosts.list   - lista hostow
+paths.list   - lista plikow i katalogow
+recovery.sh  - skrypt przywracajacy kopie zapasowa na stacje wzorcowa
+
+Uruchomienie:
+
 1. Uruchomić sshd
 2. Utworzyc konto recovery
 3. Zakomentowac w /etc/pam.d/sshd
@@ -10,14 +24,13 @@ session    optional     pam_motd.so noupdate
 ...
 4. Zmienic w /etc/passwd
 ...
-recovery:x:0:0::/home/recovery:/home/recovery/qnx_backup_and_recovery/recovery.sh
+recovery:x:0:0::/opt/qnx_backup_and_recovery:/opt/qnx_backup_and_recovery/recovery.sh
 ...
-5. Dodac zmienna srodowiskowa QNX_BACKUP_AND_RECOVERY_PATH=/home/recovery/qnx_backup_and_recovery (cp .profile ~/).
-6. Ustawic strefe czasowa:
+5. Ustawic strefe czasowa:
 timedatectl
 timedatectl list-timezones
 timedatectl set-timezone Europe/Warsaw
-7. Wygenerowac klucze SSH (ssh-keygen) i skopiowac klucz publiczny na stacje QNX (ssh_copy_id_to_hosts.sh).
-8. Na komputerach z systemem QNX zainstalować rsync (ssh_copy_rsync.sh).
-9. Skopiowanie qnx_backup_and_recovery.sh do /etc/profile.d
+6. Wygenerowac klucze SSH (ssh-keygen) i skopiowac klucz publiczny na stacje QNX (auxiliary/ssh_copy_id_to_hosts.sh).
+7. Na komputerach z systemem QNX zainstalować rsync (auxiliary/ssh_copy_rsync.sh).
+8. Skopiowanie qnx_backup_and_recovery.sh do /etc/profile.d
 

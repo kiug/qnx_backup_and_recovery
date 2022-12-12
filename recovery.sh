@@ -1,10 +1,7 @@
 #!/bin/bash
 
-[ ! -v QNX_BACKUP_AND_RECOVERY_PATH ] && 
-	echo >&2 "The environment variable QNX_BACKUP_AND_RECOVERY_PATH is not set." && exit -1
-
-source ${QNX_BACKUP_AND_RECOVERY_PATH}/config.sh
-source ${QNX_BACKUP_AND_RECOVERY_PATH}/common.sh
+source /opt/qnx_backup_and_recovery/config.sh
+source /opt/qnx_backup_and_recovery/common.sh
 
 [ ! -d $BACKUP_ROOT ] && echo >&2 "Backup directory does not exist: $BACKUP_ROOT" && exit -1
 [ ! -w $BACKUP_ROOT ] && echo >&2 "The backup directory is not writeable: $BACKUP_ROOT" && exit -1
@@ -66,5 +63,5 @@ done
 echo
 
 printf "Przywracam ${host}...\n"
-rsync -av -Rr --files-from=paths.list --log-file=${host}_$(date +%Y%m%d_%H%M%S.%N).log ${BACKUP_ROOT}/${host}${path} root@${addr}:/RECOVERY/
+rsync -av -Rr --files-from=${PATHS_LIST} --log-file=${host}_$(date +%Y%m%d_%H%M%S.%N).log ${BACKUP_ROOT}/${host}${path} root@${addr}:/RECOVERY/
 printf "OK.\n"
