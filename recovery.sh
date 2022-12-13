@@ -12,6 +12,9 @@ source /opt/qnx_backup_and_recovery/common.sh
 [ ! -f $HOSTS_LIST ] && echo >&2 "Hosts list file does not exist: $HOSTS_LIST" && exit -1
 [ ! -r $HOSTS_LIST ] && echo >&2 "The hosts list file is not readable: $HOSTS_LIST" && exit -1
 
+common.validate_ip_addr ${DEFAULT_IP_ADDRESS} ||
+	{ echo >&2 "Invalid default IP address: $DEFAULT_IP_ADDRESS" && exit -1; }
+
 command -v rsync >/dev/null 2>&1 || { echo >&2 "rsync it's not installed"; exit -1; }
 
 echo "Lista hostów:"
@@ -32,10 +35,10 @@ do
 done
 echo
 
-while read -p 'Proszę wybrać hosta z listy ([q] - wyjście): ' idx
+while read -p "Proszę wybrać hosta z listy ([q] - wyjście): " idx
 do
 	case $idx in
-		q ) echo Kończe prace.; exit;;
+		q ) echo "Kończe prace."; exit;;
 		* ) if ! [[ "$idx" =~ ^[0-9]+$ ]] || (( $idx < 0 )) || (( $idx >= $hosts_counter ));
 			then echo "Nieprawidłowy wybór"
 			else break;
@@ -44,18 +47,10 @@ do
 done
 host=${hosts[$idx]}
 
-while read -p 'Proszę podać adres IP komputera docelowego: ' addr
-do
-	if common.validate_ip_addr ${addr}
-	then break;
-	fi
-	echo "Niepoprawny adres IP"
-done
-
 while read -p "Rozpocząć przywracanie komputera ${host} (t/n): " acknowledgement
 do
 	case $acknowledgement in
-		n ) echo Kończe prace.; exit;;
+		n ) echo "Kończe prace."; exit;;
 		t ) break;;
 		* ) echo "Nieprawidłowy wybór";;
 	esac
@@ -63,5 +58,11 @@ done
 echo
 
 printf "Przywracam ${host}...\n"
-rsync -av -Rr --files-from=${PATHS_LIST} --log-file=${host}_$(date +%Y%m%d_%H%M%S.%N).log ${BACKUP_ROOT}/${host}${path} root@${addr}:/RECOVERY/
-printf "OK.\n"
+rsync -rlI --log-file=${host}_$(date +%Y%m%d_%H%M%S.%N).log ${BACKUP_ROOT}/${host}/* root@${DEFAULT_IP_ADDRESS}:/
+[ $? -ne 0 ] && echo >&2 "Błąd kopiowania plików ($?)" && exit -1
+
+ssh root@${DEFAULT_IP_ADDRESS} rcv-net
+[ $? -ne 0 ] && echo >&2 "Błąd konfiguracji sieci ($?)" && exit -1
+
+echo "Przywracanie zakończone."
+
